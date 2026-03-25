@@ -3,39 +3,28 @@
 import { BarChart3, Compass, PanelLeft, Sparkles } from "lucide-react";
 import { useState } from "react";
 
+import { InsightResults } from "@/components/insight-results";
 import { Button } from "@/components/ui/button";
 import { PanelSelect } from "@/components/ui/panel-select";
+import { categories, categoryLabels, objectiveLabels, objectives, productLabels, products, segmentLabels, segments } from "@/lib/config";
+import { getMockInsight } from "@/lib/mock-insights";
+import type { CategoryId, ExplorerSelection, ObjectiveId, ProductId, SegmentId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const PRODUCTS = ["Electric Cars", "Coffee", "Project Management Software"];
-
-const OBJECTIVES = ["Increase Awareness", "Increase Consideration", "Increase Sales"];
-
-const SEGMENTS = [
-  "Gen Z Creators",
-  "Urban Climate Advocates",
-  "Cost-Sensitive SMB Owners",
-  "Retired DIYers",
-  "Enterprise IT Leaders"
-];
-
-const CATEGORIES = [
-  "Marketing OKRs",
-  "Strengths",
-  "Weaknesses",
-  "Opportunities",
-  "Threats",
-  "Market Positioning",
-  "Buyer Persona",
-  "Investment Opportunities",
-  "Channels & Distribution"
-];
-
 export function SwotExplorerShell() {
-  const [selectedProduct, setSelectedProduct] = useState(PRODUCTS[0]);
-  const [selectedObjective, setSelectedObjective] = useState(OBJECTIVES[0]);
-  const [selectedSegment, setSelectedSegment] = useState(SEGMENTS[0]);
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
+  const [selectedProduct, setSelectedProduct] = useState<ProductId>(products[0].id);
+  const [selectedObjective, setSelectedObjective] = useState<ObjectiveId>(objectives[0].id);
+  const [selectedSegment, setSelectedSegment] = useState<SegmentId>(segments[0].id);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId>(categories[0].id);
+
+  const selection: ExplorerSelection = {
+    productId: selectedProduct,
+    objectiveId: selectedObjective,
+    segmentId: selectedSegment,
+    categoryId: selectedCategory
+  };
+
+  const insight = getMockInsight(selection);
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
@@ -51,21 +40,16 @@ export function SwotExplorerShell() {
                 <div>
                   <h1 className="text-[26px] font-semibold tracking-tight text-slate-950">SWOT Prompt Explorer</h1>
                   <p className="mt-1 max-w-2xl text-sm text-slate-600">
-                    Explore strategic prompt categories across products, objectives, and target market segments.
+                    Explore strategy prompts across products, objectives, target audiences, and planning categories.
                   </p>
                 </div>
               </div>
 
               <div className="grid gap-3 md:grid-cols-2 xl:flex xl:flex-wrap xl:items-end">
-                <PanelSelect
-                  label="Product"
-                  options={PRODUCTS}
-                  value={selectedProduct}
-                  onChange={setSelectedProduct}
-                />
+                <PanelSelect label="Product" options={products} value={selectedProduct} onChange={setSelectedProduct} />
                 <PanelSelect
                   label="Business Objective"
-                  options={OBJECTIVES}
+                  options={objectives}
                   value={selectedObjective}
                   onChange={setSelectedObjective}
                 />
@@ -87,14 +71,14 @@ export function SwotExplorerShell() {
               </div>
 
               <div className="space-y-1.5">
-                {SEGMENTS.map((segment) => {
-                  const isActive = segment === selectedSegment;
+                {segments.map((segment) => {
+                  const isActive = segment.id === selectedSegment;
 
                   return (
                     <button
-                      key={segment}
+                      key={segment.id}
                       type="button"
-                      onClick={() => setSelectedSegment(segment)}
+                      onClick={() => setSelectedSegment(segment.id)}
                       className={cn(
                         "flex w-full items-center rounded-xl border px-3.5 py-2.5 text-left transition",
                         isActive
@@ -108,7 +92,7 @@ export function SwotExplorerShell() {
                           isActive ? "bg-slate-900" : "bg-slate-200"
                         )}
                       />
-                      <span className="text-sm font-medium leading-5">{segment}</span>
+                      <span className="text-sm font-medium leading-5">{segment.label}</span>
                     </button>
                   );
                 })}
@@ -119,14 +103,14 @@ export function SwotExplorerShell() {
           <section className="flex min-h-[600px] flex-1 flex-col">
             <div className="border-b border-slate-200 bg-white">
               <div className="scrollbar-none flex gap-2 overflow-x-auto px-4 py-3 lg:px-6">
-                {CATEGORIES.map((category) => {
-                  const isActive = category === selectedCategory;
+                {categories.map((category) => {
+                  const isActive = category.id === selectedCategory;
 
                   return (
                     <button
-                      key={category}
+                      key={category.id}
                       type="button"
-                      onClick={() => setSelectedCategory(category)}
+                      onClick={() => setSelectedCategory(category.id)}
                       className={cn(
                         "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition",
                         isActive
@@ -134,7 +118,7 @@ export function SwotExplorerShell() {
                           : "border-transparent bg-transparent text-slate-500 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900"
                       )}
                     >
-                      {category}
+                      {category.label}
                     </button>
                   );
                 })}
@@ -149,11 +133,11 @@ export function SwotExplorerShell() {
                       <Compass className="size-6" />
                     </div>
                     <h2 className="mt-5 text-[28px] font-semibold tracking-tight text-slate-950">
-                      Results workspace is ready
+                      Strategy explorer workspace
                     </h2>
                     <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600">
-                      Select the planning inputs you want to explore, then generate insights to populate this workspace
-                      with category-specific output.
+                      Review structured mock insights for the selected product, objective, audience, and planning
+                      category. The data model is intentionally modular so live LLM responses can replace it later.
                     </p>
                   </div>
 
@@ -162,60 +146,22 @@ export function SwotExplorerShell() {
                       Current selection
                     </div>
                     <div className="mt-3 grid gap-3 md:grid-cols-3">
-                      <SummaryTile label="Product" value={selectedProduct} />
-                      <SummaryTile label="Objective" value={selectedObjective} />
-                      <SummaryTile label="Segment" value={selectedSegment} />
+                      <SummaryTile label="Product" value={productLabels[selectedProduct]} />
+                      <SummaryTile label="Objective" value={objectiveLabels[selectedObjective]} />
+                      <SummaryTile label="Segment" value={segmentLabels[selectedSegment]} />
                     </div>
 
                     <div className="mt-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left">
                       <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
                         Category
                       </div>
-                      <div className="mt-1.5 text-sm font-semibold text-slate-900">{selectedCategory}</div>
+                      <div className="mt-1.5 text-sm font-semibold text-slate-900">{categoryLabels[selectedCategory]}</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 grid flex-1 gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.75fr)]">
-                  <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 p-5">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-                          Insight output
-                        </div>
-                        <div className="mt-1 text-sm font-medium text-slate-700">Generated analysis will render here</div>
-                      </div>
-                      <div className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-500">
-                        Awaiting run
-                      </div>
-                    </div>
-
-                    <div className="mt-5 space-y-3">
-                      <SkeletonBlock className="h-4 w-40" />
-                      <SkeletonBlock className="h-16 w-full" />
-                      <SkeletonBlock className="h-4 w-28" />
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <SkeletonBlock className="h-24 w-full" />
-                        <SkeletonBlock className="h-24 w-full" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-5">
-                    <div className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
-                      Workspace notes
-                    </div>
-                    <div className="mt-2 text-sm leading-6 text-slate-600">
-                      This panel is intentionally prepared for structured outputs such as strengths, risks, audience
-                      themes, and channel recommendations once generation is connected.
-                    </div>
-
-                    <div className="mt-5 space-y-3">
-                      <PlaceholderRow label="Prompt status" value="Not generated yet" />
-                      <PlaceholderRow label="Source segment" value={selectedSegment} />
-                      <PlaceholderRow label="Focus area" value={selectedCategory} />
-                    </div>
-                  </div>
+                <div className="mt-6 flex-1">
+                  <InsightResults selection={selection} insight={insight} />
                 </div>
               </div>
             </div>
@@ -236,28 +182,6 @@ function SummaryTile({ label, value }: SummaryTileProps) {
     <div className="rounded-xl border border-slate-200 bg-white px-3.5 py-3">
       <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</div>
       <div className="mt-1.5 text-sm font-semibold text-slate-900">{value}</div>
-    </div>
-  );
-}
-
-type SkeletonBlockProps = {
-  className?: string;
-};
-
-function SkeletonBlock({ className }: SkeletonBlockProps) {
-  return <div className={cn("rounded-xl bg-slate-200/80", className)} />;
-}
-
-type PlaceholderRowProps = {
-  label: string;
-  value: string;
-};
-
-function PlaceholderRow({ label, value }: PlaceholderRowProps) {
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white px-4 py-3">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</div>
-      <div className="mt-1.5 text-sm font-medium text-slate-800">{value}</div>
     </div>
   );
 }
