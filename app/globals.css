@@ -24,10 +24,12 @@
 
 html {
   @apply bg-slate-50;
+  overflow-x: hidden;
 }
 
 body {
   @apply bg-slate-50 text-foreground antialiased;
+  overflow-x: hidden;
 }
 
 @layer utilities {

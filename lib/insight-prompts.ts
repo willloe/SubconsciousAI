@@ -30,7 +30,14 @@ export function buildInsightPackPrompt(selection: InsightRequestSelection): Prom
     `Product: ${productLabels[selection.productId]}`,
     `Business objective: ${objectiveLabels[selection.objectiveId]}`,
     `Market segment: ${segmentLabels[selection.segmentId]}`,
-    `Required categories: ${ALL_CATEGORIES.join(", ")}`
+    `Required categories: ${ALL_CATEGORIES.join(", ")}`,
+    "Category guidance:",
+    "- Marketing OKRs: measurable goals, targets, and watchouts.",
+    "- Strengths / Weaknesses / Opportunities / Threats: concise grouped bullets plus one recommended move.",
+    "- Market Positioning: positioning statement, differentiators, whitespace, and proof points.",
+    "- Buyer Persona: archetype, mindset, jobs, triggers, objections, and channels.",
+    "- Investment Opportunities: explain why this segment is strategically valuable, its growth potential, monetization leverage, strategic fit, and why it should be prioritized now. Do not frame this as budget allocation, channel spend, or media planning.",
+    "- Channels & Distribution: channel roles, partnership opportunities, and distribution risks."
   ].join("\n");
 
   return {
@@ -147,24 +154,21 @@ function buildCategorySchema(categoryId: CategoryId): JsonSchema {
         properties: {
           categoryId: { type: "string", const: "investment-opportunities" },
           overview: { type: "string" },
-          priorities: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                title: { type: "string" },
-                rationale: { type: "string" },
-                horizon: { type: "string" }
-              },
-              required: ["title", "rationale", "horizon"],
-              additionalProperties: false
-            },
-            minItems: 3,
-            maxItems: 3
-          },
-          guardrails: stringArraySchema(3, 4)
+          strategicValue: { type: "string" },
+          growthPotential: { type: "string" },
+          monetizationLeverage: { type: "string" },
+          strategicFit: { type: "string" },
+          whyNow: stringArraySchema(3, 4)
         },
-        required: ["categoryId", "overview", "priorities", "guardrails"],
+        required: [
+          "categoryId",
+          "overview",
+          "strategicValue",
+          "growthPotential",
+          "monetizationLeverage",
+          "strategicFit",
+          "whyNow"
+        ],
         additionalProperties: false
       };
     case "channels-distribution":

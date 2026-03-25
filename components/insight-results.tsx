@@ -1,5 +1,6 @@
 import { categoryLabels, objectiveLabels, productLabels, segmentLabels } from "@/lib/config";
 import type { ExplorerSelection, MockInsight } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type InsightResultsProps = {
   selection: ExplorerSelection;
@@ -10,22 +11,19 @@ export function InsightResults({ selection, insight }: InsightResultsProps) {
   return (
     <div className="space-y-4">
       <SurfaceCard className="bg-slate-50/80">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-2xl">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-              {categoryLabels[selection.categoryId]}
-            </div>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight text-slate-950">
-              {productLabels[selection.productId]} x {segmentLabels[selection.segmentId]}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">{insight.overview}</p>
+        <div className="max-w-3xl">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+            {categoryLabels[selection.categoryId]}
           </div>
-
-          <div className="grid gap-2 sm:grid-cols-3 lg:w-[430px]">
-            <SummaryChip label="Objective" value={objectiveLabels[selection.objectiveId]} />
-            <SummaryChip label="Segment" value={segmentLabels[selection.segmentId]} />
-            <SummaryChip label="Product" value={productLabels[selection.productId]} />
-          </div>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight text-slate-950">
+            {productLabels[selection.productId]} x {segmentLabels[selection.segmentId]}
+          </h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{insight.overview}</p>
+          {insight.categoryId === "marketing-okrs" ? (
+            <p className="mt-3 text-sm text-slate-500">
+              Structured for {objectiveLabels[selection.objectiveId].toLowerCase()} planning.
+            </p>
+          ) : null}
         </div>
       </SurfaceCard>
 
@@ -73,18 +71,18 @@ function renderCategory(selection: ExplorerSelection, insight: MockInsight) {
               </SurfaceCard>
             ))}
           </div>
-          <SurfaceCard className="bg-slate-950 text-white">
-            <SectionEyebrow className="text-slate-400">Recommended Move</SectionEyebrow>
-            <p className="mt-2 text-sm leading-6 text-slate-200">{insight.recommendation}</p>
+          <SurfaceCard className="bg-slate-50">
+            <SectionEyebrow>Recommended Move</SectionEyebrow>
+            <p className="mt-2 text-sm leading-6 text-slate-800">{insight.recommendation}</p>
           </SurfaceCard>
         </div>
       );
     case "market-positioning":
       return (
         <div className="space-y-4">
-          <SurfaceCard className="bg-slate-950 text-white">
-            <SectionEyebrow className="text-slate-400">Positioning Statement</SectionEyebrow>
-            <p className="mt-3 text-lg font-medium leading-8 text-slate-100">{insight.positioningStatement}</p>
+          <SurfaceCard className="bg-slate-50">
+            <SectionEyebrow>Positioning Statement</SectionEyebrow>
+            <p className="mt-3 text-lg font-medium leading-8 text-slate-900">{insight.positioningStatement}</p>
           </SurfaceCard>
           <div className="grid gap-4 xl:grid-cols-3">
             <SurfaceCard>
@@ -124,19 +122,29 @@ function renderCategory(selection: ExplorerSelection, insight: MockInsight) {
       );
     case "investment-opportunities":
       return (
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(300px,0.8fr)]">
-          <div className="grid gap-4 md:grid-cols-3">
-            {insight.priorities.map((priority) => (
-              <SurfaceCard key={priority.title}>
-                <SectionEyebrow>{priority.horizon}</SectionEyebrow>
-                <h4 className="mt-2 text-base font-semibold text-slate-950">{priority.title}</h4>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{priority.rationale}</p>
-              </SurfaceCard>
-            ))}
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <SurfaceCard>
+              <SectionEyebrow>Strategic Value</SectionEyebrow>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{insight.strategicValue}</p>
+            </SurfaceCard>
+            <SurfaceCard>
+              <SectionEyebrow>Growth Potential</SectionEyebrow>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{insight.growthPotential}</p>
+            </SurfaceCard>
+            <SurfaceCard>
+              <SectionEyebrow>Monetization Leverage</SectionEyebrow>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{insight.monetizationLeverage}</p>
+            </SurfaceCard>
+            <SurfaceCard>
+              <SectionEyebrow>Strategic Fit</SectionEyebrow>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{insight.strategicFit}</p>
+            </SurfaceCard>
           </div>
+
           <SurfaceCard>
-            <SectionEyebrow>Guardrails</SectionEyebrow>
-            <BulletList items={insight.guardrails} className="mt-4" />
+            <SectionEyebrow>Why Prioritize Now</SectionEyebrow>
+            <BulletList items={insight.whyNow} className="mt-4" />
           </SurfaceCard>
         </div>
       );
@@ -173,7 +181,7 @@ type SurfaceCardProps = {
 };
 
 function SurfaceCard({ children, className }: SurfaceCardProps) {
-  return <section className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ${className ?? ""}`}>{children}</section>;
+  return <section className={cn("rounded-2xl border border-slate-200 bg-white p-5 shadow-sm", className)}>{children}</section>;
 }
 
 type SectionEyebrowProps = {
@@ -183,22 +191,8 @@ type SectionEyebrowProps = {
 
 function SectionEyebrow({ children, className }: SectionEyebrowProps) {
   return (
-    <div className={`text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 ${className ?? ""}`}>
+    <div className={cn("text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500", className)}>
       {children}
-    </div>
-  );
-}
-
-type SummaryChipProps = {
-  label: string;
-  value: string;
-};
-
-function SummaryChip({ label, value }: SummaryChipProps) {
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white px-3.5 py-3">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</div>
-      <div className="mt-1.5 text-sm font-semibold text-slate-900">{value}</div>
     </div>
   );
 }
@@ -210,7 +204,7 @@ type BulletListProps = {
 
 function BulletList({ items, className }: BulletListProps) {
   return (
-    <ul className={`space-y-3 ${className ?? ""}`}>
+    <ul className={cn("space-y-3", className)}>
       {items.map((item) => (
         <li key={item} className="flex gap-3 text-sm leading-6 text-slate-600">
           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />

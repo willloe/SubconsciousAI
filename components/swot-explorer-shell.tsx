@@ -1,6 +1,6 @@
 "use client";
 
-import { Compass, PanelLeft, Sparkles } from "lucide-react";
+import { Compass, LoaderCircle, PanelLeft, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { InsightResults } from "@/components/insight-results";
@@ -96,8 +96,8 @@ export function SwotExplorerShell() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950">
-      <div className="mx-auto flex min-h-screen max-w-[1600px] flex-col lg:flex-row">
+    <main className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-950">
+      <div className="mx-auto flex min-h-screen max-w-[1600px] min-w-0 flex-col overflow-x-hidden lg:flex-row">
         <aside className="border-b border-slate-200 bg-white lg:w-[272px] lg:border-b-0 lg:border-r">
           <div className="flex h-full flex-col px-4 py-5 lg:px-5">
             <div className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
@@ -135,8 +135,8 @@ export function SwotExplorerShell() {
           </div>
         </aside>
 
-        <section className="flex min-h-[700px] flex-1 p-5 lg:p-6">
-          <div className="flex w-full flex-col rounded-[28px] border border-slate-200 bg-white shadow-sm">
+        <section className="flex min-h-[700px] min-w-0 flex-1 p-5 lg:p-6">
+          <div className="flex min-w-0 w-full flex-col rounded-[28px] border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 px-6 py-6 lg:px-7">
               <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
                 <div className="max-w-2xl">
@@ -150,7 +150,7 @@ export function SwotExplorerShell() {
                   </p>
                 </div>
 
-                <div className="w-full max-w-3xl space-y-4">
+                <div className="w-full max-w-3xl min-w-0 space-y-4">
                   <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_minmax(220px,1fr)_auto]">
                     <PanelSelect
                       label="Product"
@@ -190,26 +190,29 @@ export function SwotExplorerShell() {
             </div>
 
             <div className="border-b border-slate-200 bg-white px-4 py-3 lg:px-6">
-              <div className="scrollbar-none flex gap-2 overflow-x-auto">
-                {categories.map((category) => {
-                  const isActive = category.id === selectedCategory;
+              <div className="min-w-0 overflow-x-auto overflow-y-hidden pb-2">
+                <div className="inline-flex min-w-max flex-nowrap gap-2 pr-10">
+                    {categories.map((category) => {
+                      const isActive = category.id === selectedCategory;
 
-                  return (
-                    <button
-                      key={category.id}
-                      type="button"
-                      onClick={() => setSelectedCategory(category.id)}
-                      className={cn(
-                        "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition",
-                        isActive
-                          ? "border-slate-300 bg-slate-100 text-slate-950 shadow-sm"
-                          : "border-transparent bg-transparent text-slate-500 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900"
-                      )}
-                    >
-                      {category.label}
-                    </button>
-                  );
-                })}
+                      return (
+                        <button
+                          key={category.id}
+                          type="button"
+                          onClick={() => setSelectedCategory(category.id)}
+                          className={cn(
+                            "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition",
+                            isActive
+                              ? "border-slate-300 bg-slate-100 text-slate-950 shadow-sm"
+                              : "border-transparent bg-transparent text-slate-500 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900"
+                          )}
+                        >
+                          {category.label}
+                        </button>
+                      );
+                    })}
+                  <div className="w-6 shrink-0" aria-hidden="true" />
+                </div>
               </div>
             </div>
 
@@ -226,11 +229,8 @@ export function SwotExplorerShell() {
                 {isLoading ? (
                   <WorkspaceBanner
                     tone="loading"
-                    message={
-                      generatedInsights
-                        ? "Refreshing the full insight pack for the latest selection."
-                        : "Generating the full insight pack."
-                    }
+                    message="Generating the full insight pack..."
+                    helperText="This may take up to 30 seconds."
                   />
                 ) : null}
 
@@ -284,8 +284,13 @@ function WorkspaceBanner({ tone, message, helperText }: WorkspaceBannerProps) {
 
   return (
     <div className={cn("rounded-xl border px-4 py-3", toneClasses[tone])}>
-      <div className="text-sm font-medium">{message}</div>
-      {helperText ? <div className="mt-1 text-xs opacity-80">{helperText}</div> : null}
+      <div className="flex items-start gap-3">
+        {tone === "loading" ? <LoaderCircle className="mt-0.5 size-4 shrink-0 animate-spin" /> : null}
+        <div>
+          <div className="text-sm font-medium">{message}</div>
+          {helperText ? <div className="mt-1 text-xs opacity-80">{helperText}</div> : null}
+        </div>
+      </div>
     </div>
   );
 }

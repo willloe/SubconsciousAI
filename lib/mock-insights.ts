@@ -291,28 +291,15 @@ export function getMockInsight(selection: ExplorerSelection): MockInsight {
     case "investment-opportunities":
       return {
         categoryId: "investment-opportunities",
-        overview: `The best near-term investments are the ones that reduce buying friction while making the offer easier to remember and act on for ${segmentLabels[selection.segmentId]}.`,
-        priorities: [
-          {
-            title: `Build proof assets around ${productProfiles[selection.productId].proofPoints[0]}`,
-            rationale: `This directly supports ${objectiveProfiles[selection.objectiveId].actionBias} and helps resolve ${segmentProfiles[selection.segmentId].barriers[0]}.`,
-            horizon: "Near term"
-          },
-          {
-            title: `Fund a segment-specific journey for ${segmentProfiles[selection.segmentId].channels[0]}`,
-            rationale: "The audience is already reachable there, but messaging needs to feel native and high-signal.",
-            horizon: "Near term"
-          },
-          {
-            title: "Scale one conversion-oriented enablement layer",
-            rationale: `Invest in ${productProfiles[selection.productId].investments[0]} so the team can move from attention to action more efficiently.`,
-            horizon: "Mid term"
-          }
-        ],
-        guardrails: [
-          "Do not split budget evenly across every channel before a strong wedge message emerges.",
-          `Protect against ${objectiveProfiles[selection.objectiveId].risk} by keeping success metrics tied to buyer movement, not just impressions.`,
-          "Prioritize assets that can be repurposed across categories once live generation is added."
+        overview: `This segment is attractive when the business needs a focused audience with credible demand signals, measurable upside, and a story that supports ${objectiveProfiles[selection.objectiveId].actionBias}.`,
+        strategicValue: `The segment already cares about ${segmentProfiles[selection.segmentId].motivations[0]} and ${segmentProfiles[selection.segmentId].motivations[1]}, giving ${productLabels[selection.productId]} a sharper strategic wedge than a broad-market approach.`,
+        growthPotential: `There is room to expand by translating ${productProfiles[selection.productId].proofPoints[0]} into a clearer segment-specific value story that compounds awareness and consideration over time.`,
+        monetizationLeverage: `If the offer earns trust with this audience, it can convert through stronger repeat usage, higher-value packages, or broader account expansion tied to ${productProfiles[selection.productId].promise}.`,
+        strategicFit: `The segment is a strong fit because its needs map well to ${productProfiles[selection.productId].proofPoints[1]} and to the current objective of ${objectiveLabels[selection.objectiveId].toLowerCase()}.`,
+        whyNow: [
+          `The category is still open enough to claim relevance before competitors fully own the ${segmentProfiles[selection.segmentId].triggers[0]} narrative.`,
+          `This audience offers a practical route to momentum because it is already active in channels like ${segmentProfiles[selection.segmentId].channels[0]} and ${segmentProfiles[selection.segmentId].channels[1]}.`,
+          `Prioritizing now helps the team build proof and message discipline before broadening into lower-fit segments.`
         ]
       };
     case "channels-distribution":

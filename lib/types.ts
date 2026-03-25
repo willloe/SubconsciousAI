@@ -82,12 +82,11 @@ export type BuyerPersonaInsight = {
 export type InvestmentOpportunitiesInsight = {
   categoryId: "investment-opportunities";
   overview: string;
-  priorities: Array<{
-    title: string;
-    rationale: string;
-    horizon: string;
-  }>;
-  guardrails: string[];
+  strategicValue: string;
+  growthPotential: string;
+  monetizationLeverage: string;
+  strategicFit: string;
+  whyNow: string[];
 };
 
 export type ChannelsDistributionInsight = {
