@@ -107,3 +107,17 @@ export type MockInsight =
   | BuyerPersonaInsight
   | InvestmentOpportunitiesInsight
   | ChannelsDistributionInsight;
+
+export type InsightGenerationRequest = ExplorerSelection;
+
+export type InsightGenerationResponse = {
+  insight: MockInsight;
+  selection: ExplorerSelection;
+};
+
+export type InsightGenerationErrorResponse = {
+  error: {
+    code: "INVALID_REQUEST" | "MISSING_API_KEY" | "GENERATION_FAILED";
+    message: string;
+  };
+};
