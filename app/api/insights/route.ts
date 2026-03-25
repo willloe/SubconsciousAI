@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { generateInsight, InsightGenerationError, MissingApiKeyError } from "@/lib/openai";
+import { generateInsightPack, InsightGenerationError, MissingApiKeyError } from "@/lib/openai";
 import { parseInsightGenerationRequest } from "@/lib/insight-validation";
 import type { InsightGenerationErrorResponse, InsightGenerationResponse } from "@/lib/types";
 
@@ -10,10 +10,10 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const selection = parseInsightGenerationRequest(body);
-    const insight = await generateInsight(selection);
+    const insights = await generateInsightPack(selection);
 
     return NextResponse.json<InsightGenerationResponse>({
-      insight,
+      insights,
       selection
     });
   } catch (error) {

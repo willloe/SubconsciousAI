@@ -1,7 +1,7 @@
 import "server-only";
 
-import { buildInsightPrompt } from "@/lib/insight-prompts";
-import type { ExplorerSelection, MockInsight } from "@/lib/types";
+import { buildInsightPackPrompt } from "@/lib/insight-prompts";
+import type { InsightPack, InsightRequestSelection } from "@/lib/types";
 
 const OPENAI_API_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-4.1-mini";
@@ -38,9 +38,9 @@ type OpenAIConfig = {
   model: string;
 };
 
-export async function generateInsight(selection: ExplorerSelection): Promise<MockInsight> {
+export async function generateInsightPack(selection: InsightRequestSelection): Promise<InsightPack> {
   const config = getOpenAIConfig();
-  const { instructions, input, schemaName, schema } = buildInsightPrompt(selection);
+  const { instructions, input, schemaName, schema } = buildInsightPackPrompt(selection);
 
   const response = await fetch(OPENAI_API_URL, {
     method: "POST",
@@ -79,7 +79,7 @@ export async function generateInsight(selection: ExplorerSelection): Promise<Moc
   }
 
   try {
-    return JSON.parse(text) as MockInsight;
+    return JSON.parse(text) as InsightPack;
   } catch {
     throw new InsightGenerationError("The model returned invalid JSON.");
   }

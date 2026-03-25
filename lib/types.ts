@@ -34,6 +34,8 @@ export type ExplorerSelection = {
   categoryId: CategoryId;
 };
 
+export type InsightRequestSelection = Omit<ExplorerSelection, "categoryId">;
+
 export type MarketingOkr = {
   objective: string;
   target: string;
@@ -108,11 +110,27 @@ export type MockInsight =
   | InvestmentOpportunitiesInsight
   | ChannelsDistributionInsight;
 
-export type InsightGenerationRequest = ExplorerSelection;
+export type InsightByCategory = {
+  "marketing-okrs": MarketingOkrsInsight;
+  strengths: SwotInsight;
+  weaknesses: SwotInsight;
+  opportunities: SwotInsight;
+  threats: SwotInsight;
+  "market-positioning": MarketPositioningInsight;
+  "buyer-persona": BuyerPersonaInsight;
+  "investment-opportunities": InvestmentOpportunitiesInsight;
+  "channels-distribution": ChannelsDistributionInsight;
+};
+
+export type InsightPack = {
+  [K in CategoryId]: InsightByCategory[K];
+};
+
+export type InsightGenerationRequest = InsightRequestSelection;
 
 export type InsightGenerationResponse = {
-  insight: MockInsight;
-  selection: ExplorerSelection;
+  insights: InsightPack;
+  selection: InsightRequestSelection;
 };
 
 export type InsightGenerationErrorResponse = {

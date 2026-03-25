@@ -1,17 +1,16 @@
-import { categories, objectives, products, segments } from "@/lib/config";
-import type { ExplorerSelection, InsightGenerationRequest } from "@/lib/types";
+import { objectives, products, segments } from "@/lib/config";
+import type { InsightGenerationRequest, InsightRequestSelection } from "@/lib/types";
 
 const productIds = new Set(products.map((item) => item.id));
 const objectiveIds = new Set(objectives.map((item) => item.id));
 const segmentIds = new Set(segments.map((item) => item.id));
-const categoryIds = new Set(categories.map((item) => item.id));
 
 export function parseInsightGenerationRequest(value: unknown): InsightGenerationRequest {
   if (!value || typeof value !== "object") {
     throw new Error("Request body must be an object.");
   }
 
-  const candidate = value as Partial<ExplorerSelection>;
+  const candidate = value as Partial<InsightRequestSelection>;
 
   if (!candidate.productId || !productIds.has(candidate.productId)) {
     throw new Error("Invalid product.");
@@ -25,14 +24,9 @@ export function parseInsightGenerationRequest(value: unknown): InsightGeneration
     throw new Error("Invalid segment.");
   }
 
-  if (!candidate.categoryId || !categoryIds.has(candidate.categoryId)) {
-    throw new Error("Invalid category.");
-  }
-
   return {
     productId: candidate.productId,
     objectiveId: candidate.objectiveId,
-    segmentId: candidate.segmentId,
-    categoryId: candidate.categoryId
+    segmentId: candidate.segmentId
   };
 }
